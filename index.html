@@ -1,0 +1,111 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title></title>
+        <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+     
+      #map {
+        height: 50%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        
+      }
+    </style>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+       
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script type="text/template" id="MotorTemplate">
+           
+        
+        <div class='panel-footer'>
+             <div class="row">
+   
+    <div class="col-sm-4" style="background-color:lightblue;">{{borough}}</div>
+    <div class="col-sm-2" style="background-color:yellow;">Date: {{date}}</div>
+    <div class="col-sm-2" style="background-color:lightgreen;">Time: {{time}}</div>
+    <div class="col-sm-3" style="background-color:pink;">Reason: {{contributing_factor_vehicle_1}}</div>
+  </div>
+            
+        
+            Latitude: {{latitude}}<br>Longitude: {{longitude}}
+            <br>
+            <button type = "button" class="btn btn-primary" onclick="initMap( {{latitude}}, {{longitude}} )">Map</button>
+        </div>
+        </script>
+        <script>
+            
+        function loadJSON(){       
+            $.getJSON("https://data.cityofnewyork.us/resource/qiz3-axqb.json", function(result){        
+                displayMotorInfo(result);
+         });    
+        }
+        function displayMotorInfo(data){
+            var m = document.getElementById("motor").value; 
+            var build = "";
+            var output = document.getElementById("op");
+            var template = document.getElementById("MotorTemplate").innerHTML;
+            
+            for(i=0; i<data.length; i++){
+                try{
+                    var b = data[i].borough;
+                         if(b.indexOf(m.toUpperCase()) != -1){  
+                            build += Mustache.render(template, data[i]);
+                        }
+                    }catch(ooo){
+
+                    }
+            }
+            output.innerHTML = build;    
+}
+ function initMap(Lat, Lon){
+        var gMap = document.getElementById('map');
+        var myCenter = new google.maps.LatLng(Lat, Lon);
+         var mapProp = {
+          center: myCenter,
+          zoom: 18,
+        };
+        var map = new google.maps.Map(gMap,mapProp);
+        var marker = new google.maps.Marker({
+            position: myCenter
+        });
+        marker.setMap(map);
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRuOS9z4HKxb7bkkVKdVeWhbRPoUG-zMA&callback=initMap"
+    async defer></script>
+</script>
+
+    </head>
+    <body>
+      <div id="map"></div>  
+        <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">NYPD Motor Vehicle Collision</a>
+            </div>
+                <br>
+                <br> 
+                <br>
+          
+       
+        <input type = "text" id = "motor" placeholder="Enter Borough">
+            <button class="btn btn-primary" button onclick = "loadJSON()">Borough</button>
+              
+            <div id = "op"></div>
+        
+
+        
+    </body>
+</html>
